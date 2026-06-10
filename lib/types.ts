@@ -38,11 +38,14 @@ export interface KpiCard {
 export type AlertType = 'info' | 'success' | 'warning' | 'error'
 
 export interface AlertConfig {
-  id: string
-  clientId: string
-  column: string
-  condition: 'greater_than' | 'less_than' | 'equals' | 'changed'
+  id:         string
+  clientId:   string
+  column:     string
+  condition:  'greater_than' | 'less_than' | 'equals' | 'changed'
   threshold?: number
-  email: string
-  active: boolean
+  email:      string
+  active:     boolean
+  createdAt?: string
+  lastSentAt?: string
+  lastValue?:  number
 }
