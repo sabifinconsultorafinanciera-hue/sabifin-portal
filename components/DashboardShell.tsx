@@ -2,40 +2,41 @@
 import { useState } from 'react'
 import Sidebar from '@/components/Sidebar'
 import MobileHeader from '@/components/MobileHeader'
+import type { Rol } from '@/lib/types'
 
 interface DashboardShellProps {
-  clientName: string
-  email: string
-  children: React.ReactNode
+  userName:  string
+  email:     string
+  rol:       Rol
+  empresa:   string
+  children:  React.ReactNode
 }
 
-export default function DashboardShell({ clientName, email, children }: DashboardShellProps) {
+export default function DashboardShell({ userName, email, rol, empresa, children }: DashboardShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: 'var(--color-bg-page)' }}>
 
-      {/* Sidebar — solo visible en desktop */}
+      {/* Sidebar desktop */}
       <div className="hidden lg:flex">
-        <Sidebar clientName={clientName} email={email} />
+        <Sidebar userName={userName} email={email} rol={rol} empresa={empresa} />
       </div>
 
       {/* Columna derecha */}
       <div className="flex-1 flex flex-col overflow-hidden">
-
-        {/* Header móvil */}
         <MobileHeader
-          clientName={clientName}
+          userName={userName}
+          rol={rol}
+          empresa={empresa}
           open={mobileOpen}
           onToggle={() => setMobileOpen(v => !v)}
         />
-
-        {/* Contenido con scroll */}
         <main className="flex-1 overflow-y-auto">
           {children}
         </main>
-
       </div>
+
     </div>
   )
 }

@@ -67,7 +67,7 @@ export default async function ReportesPage() {
       <div>
         <h1 className="text-2xl font-bold text-text-primary">Reportes mensuales</h1>
         <p className="text-sm text-text-secondary mt-1">
-          Resumen financiero de {session.clientName}
+          Resumen financiero de {session.userName}
         </p>
       </div>
 

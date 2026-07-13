@@ -7,7 +7,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const session = await verifyAdmin()
 
   return (
-    <AdminShell adminName={session.clientName}>
+    <AdminShell adminName={session.userName}>
       {children}
     </AdminShell>
   )

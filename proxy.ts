@@ -20,7 +20,7 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL('/login', req.nextUrl))
   }
 
-  // Ruta de admin pero no es admin → dashboard
+  // Ruta admin pero no es admin Sabifin → dashboard
   if (isAdminRoute && session?.userId && !session.isAdmin) {
     return NextResponse.redirect(new URL('/dashboard', req.nextUrl))
   }

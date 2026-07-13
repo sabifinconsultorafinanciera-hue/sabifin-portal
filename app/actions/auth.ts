@@ -2,9 +2,8 @@
 import { redirect } from 'next/navigation'
 import { adminAuth, adminDb } from '@/lib/firebase/admin'
 import { createSession, deleteSession } from '@/lib/session'
-import type { ClientConfig } from '@/lib/types'
+import type { Usuario } from '@/lib/types'
 
-// ── Login con Firebase ID Token ────────────────────────────
 export async function loginWithIdToken(idToken: string): Promise<{ error?: string }> {
   try {
     const decoded = await adminAuth.verifyIdToken(idToken)
@@ -14,28 +13,36 @@ export async function loginWithIdToken(idToken: string): Promise<{ error?: strin
     const adminDoc = await adminDb.collection('admins').doc(uid).get()
     if (adminDoc.exists) {
       await createSession({
-        userId:     uid,
-        email:      decoded.email ?? '',
-        clientName: adminDoc.data()?.name ?? 'Admin Sabifin',
-        isAdmin:    true,
-        expiresAt:  new Date(),
+        userId:    uid,
+        email:     decoded.email ?? '',
+        userName:  adminDoc.data()?.nombre ?? 'Admin Sabifin',
+        empresaId: null,
+        rol:       'admin_sabifin',
+        isAdmin:   true,
+        expiresAt: new Date(),
       })
       redirect('/admin')
     }
 
-    // 2 — Verificar si es cliente registrado
-    const clientDoc = await adminDb.collection('clients').doc(uid).get()
-    if (!clientDoc.exists) {
+    // 2 — Verificar si es usuario de una empresa
+    const usuarioDoc = await adminDb.collection('usuarios').doc(uid).get()
+    if (!usuarioDoc.exists) {
       return { error: 'Tu cuenta no está activada. Contactá a Sabifin.' }
     }
 
-    const clientData = clientDoc.data() as ClientConfig
+    const usuario = usuarioDoc.data() as Usuario
+    if (!usuario.activo) {
+      return { error: 'Tu cuenta está desactivada. Contactá a Sabifin.' }
+    }
+
     await createSession({
-      userId:     uid,
-      email:      decoded.email ?? '',
-      clientName: clientData.clientName,
-      isAdmin:    false,
-      expiresAt:  new Date(),
+      userId:    uid,
+      email:     decoded.email ?? '',
+      userName:  usuario.nombre,
+      empresaId: usuario.empresaId,
+      rol:       usuario.rol,
+      isAdmin:   false,
+      expiresAt: new Date(),
     })
   } catch (err) {
     console.error('loginWithIdToken error:', err)
@@ -45,7 +52,6 @@ export async function loginWithIdToken(idToken: string): Promise<{ error?: strin
   redirect('/dashboard')
 }
 
-// ── Logout ─────────────────────────────────────────────────
 export async function logout(): Promise<void> {
   await deleteSession()
   redirect('/login')
