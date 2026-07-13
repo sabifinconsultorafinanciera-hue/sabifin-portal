@@ -5,7 +5,8 @@ import { usePathname } from 'next/navigation'
 import { logout } from '@/app/actions/auth'
 
 const navItems = [
-  { href: '/admin/clientes', label: 'Clientes', icon: '◈' },
+  { href: '/admin/empresas', label: 'Empresas', icon: '🏢' },
+  { href: '/admin/clientes', label: 'Clientes',  icon: '◈' },
 ]
 
 interface Props {
