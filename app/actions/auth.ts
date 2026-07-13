@@ -5,6 +5,8 @@ import { createSession, deleteSession } from '@/lib/session'
 import type { Usuario } from '@/lib/types'
 
 export async function loginWithIdToken(idToken: string): Promise<{ error?: string }> {
+  let redirectTo = '/dashboard'
+
   try {
     const decoded = await adminAuth.verifyIdToken(idToken)
     const uid     = decoded.uid
@@ -21,35 +23,35 @@ export async function loginWithIdToken(idToken: string): Promise<{ error?: strin
         isAdmin:   true,
         expiresAt: new Date(),
       })
-      redirect('/admin')
-    }
+      redirectTo = '/admin'
+    } else {
+      // 2 — Verificar si es usuario de una empresa
+      const usuarioDoc = await adminDb.collection('usuarios').doc(uid).get()
+      if (!usuarioDoc.exists) {
+        return { error: 'Tu cuenta no está activada. Contactá a Sabifin.' }
+      }
 
-    // 2 — Verificar si es usuario de una empresa
-    const usuarioDoc = await adminDb.collection('usuarios').doc(uid).get()
-    if (!usuarioDoc.exists) {
-      return { error: 'Tu cuenta no está activada. Contactá a Sabifin.' }
-    }
+      const usuario = usuarioDoc.data() as Usuario
+      if (!usuario.activo) {
+        return { error: 'Tu cuenta está desactivada. Contactá a Sabifin.' }
+      }
 
-    const usuario = usuarioDoc.data() as Usuario
-    if (!usuario.activo) {
-      return { error: 'Tu cuenta está desactivada. Contactá a Sabifin.' }
+      await createSession({
+        userId:    uid,
+        email:     decoded.email ?? '',
+        userName:  usuario.nombre,
+        empresaId: usuario.empresaId,
+        rol:       usuario.rol,
+        isAdmin:   false,
+        expiresAt: new Date(),
+      })
     }
-
-    await createSession({
-      userId:    uid,
-      email:     decoded.email ?? '',
-      userName:  usuario.nombre,
-      empresaId: usuario.empresaId,
-      rol:       usuario.rol,
-      isAdmin:   false,
-      expiresAt: new Date(),
-    })
   } catch (err) {
     console.error('loginWithIdToken error:', err)
     return { error: 'Error de autenticación. Verificá tus credenciales.' }
   }
 
-  redirect('/dashboard')
+  redirect(redirectTo)
 }
 
 export async function logout(): Promise<void> {
