@@ -13,6 +13,7 @@ export async function loginWithIdToken(idToken: string): Promise<{ error?: strin
 
     // 1 — Verificar si es admin de Sabifin
     const adminDoc = await adminDb.collection('admins').doc(uid).get()
+    console.log('[auth] uid:', uid, '| adminDoc.exists:', adminDoc.exists, '| project:', process.env.FIREBASE_PROJECT_ID)
     if (adminDoc.exists) {
       await createSession({
         userId:    uid,
