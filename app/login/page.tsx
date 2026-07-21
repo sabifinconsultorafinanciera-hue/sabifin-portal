@@ -31,8 +31,8 @@ export default function LoginPage() {
               Sabi<br/>Fin
             </span>
           </div>
-          <h1 className="text-2xl font-bold text-text-primary">Portal de Clientes</h1>
-          <p className="text-sm text-text-secondary mt-1">Ingresa con tu cuenta Sabifin</p>
+          <h1 className="text-2xl font-bold text-text-primary">Sistema de Gestión</h1>
+          <p className="text-sm text-text-secondary mt-1">Ingresá con tu cuenta Sabifin</p>
         </div>
 
         {/* Card del formulario */}

@@ -64,10 +64,31 @@ export async function actualizarEstadoTransito(
     const session = await verifySession()
     if (!session.empresaId) return { ok: false, error: 'Sin empresa.' }
 
-    await adminDb
-      .collection('empresas').doc(session.empresaId)
-      .collection('transito').doc(transitoId)
-      .update({ estado, actualizadoEn: new Date().toISOString() })
+    const empresaRef  = adminDb.collection('empresas').doc(session.empresaId)
+    const transitoRef = empresaRef.collection('transito').doc(transitoId)
+
+    if (estado === 'recibido') {
+      const transitoSnap = await transitoRef.get()
+      if (transitoSnap.exists) {
+        const items = (transitoSnap.data()!.items ?? []) as Array<{ productoNombre: string; cantidad: number }>
+        const productosSnap = await empresaRef.collection('productos').get()
+        const byName = new Map(productosSnap.docs.map(d => [
+          (d.data().nombre as string).toLowerCase(), d
+        ]))
+        const batch = adminDb.batch()
+        for (const item of items) {
+          const match = byName.get(item.productoNombre.toLowerCase())
+          if (match) {
+            const nuevo = (match.data().stockActual ?? 0) + item.cantidad
+            batch.update(match.ref, { stockActual: nuevo })
+          }
+        }
+        await batch.commit()
+        revalidatePath('/dashboard/stock')
+      }
+    }
+
+    await transitoRef.update({ estado, actualizadoEn: new Date().toISOString() })
 
     revalidatePath('/dashboard/transito')
     revalidatePath('/dashboard')

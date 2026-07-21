@@ -6,10 +6,9 @@ import type { Empresa, Usuario } from '@/lib/types'
 import EditarEmpresaForm from '@/components/EditarEmpresaForm'
 import NuevoUsuarioForm from '@/components/NuevoUsuarioForm'
 import ToggleUsuario from '@/components/ToggleUsuario'
+import EditarUsuarioAcciones from '@/components/EditarUsuarioAcciones'
 
 export const metadata = { title: 'Gestionar empresa — Admin Sabifin' }
-
-const ROL_LABEL = { vendedor: 'Vendedor', gerente: 'Gerente' }
 
 export default async function EmpresaDetallePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -61,8 +60,8 @@ export default async function EmpresaDetallePage({ params }: { params: Promise<{
                 <tr style={{ background: '#f8f7f4', borderBottom: '1px solid var(--color-border-light)' }}>
                   <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wide text-text-muted">Nombre</th>
                   <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wide text-text-muted">Email</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wide text-text-muted">Rol</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wide text-text-muted">Estado</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wide text-text-muted">Rol / Contraseña</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wide text-text-muted">Activo</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-light">
@@ -71,15 +70,7 @@ export default async function EmpresaDetallePage({ params }: { params: Promise<{
                     <td className="px-5 py-3 font-medium text-text-primary">{u.nombre}</td>
                     <td className="px-5 py-3 text-text-secondary">{u.email}</td>
                     <td className="px-5 py-3">
-                      <span
-                        className="text-xs font-semibold px-2.5 py-1 rounded-full"
-                        style={{
-                          background: u.rol === 'gerente' ? '#dbeafe' : '#f3e8ff',
-                          color: u.rol === 'gerente' ? '#1d6fa4' : '#7c3aed',
-                        }}
-                      >
-                        {ROL_LABEL[u.rol]}
-                      </span>
+                      <EditarUsuarioAcciones uid={u.uid} rol={u.rol} empresaId={id} />
                     </td>
                     <td className="px-5 py-3">
                       <ToggleUsuario uid={u.uid} activo={u.activo} empresaId={id} />

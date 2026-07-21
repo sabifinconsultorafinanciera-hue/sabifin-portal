@@ -177,3 +177,34 @@ export async function toggleUsuarioActivo(
     return { ok: false, error: 'No se pudo actualizar el usuario.' }
   }
 }
+
+export async function actualizarRolUsuario(
+  uid: string,
+  rol: 'vendedor' | 'gerente',
+  empresaId: string,
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    await requireAdmin()
+    await adminDb.collection('usuarios').doc(uid).update({ rol })
+    revalidatePath(`/admin/empresas/${empresaId}`)
+    return { ok: true }
+  } catch (err) {
+    console.error('[Admin] actualizarRolUsuario error:', err)
+    return { ok: false, error: 'No se pudo cambiar el rol.' }
+  }
+}
+
+export async function resetearPasswordUsuario(
+  uid: string,
+  nuevaPassword: string,
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    await requireAdmin()
+    if (nuevaPassword.length < 6) return { ok: false, error: 'Mínimo 6 caracteres.' }
+    await adminAuth.updateUser(uid, { password: nuevaPassword })
+    return { ok: true }
+  } catch (err) {
+    console.error('[Admin] resetearPasswordUsuario error:', err)
+    return { ok: false, error: 'No se pudo cambiar la contraseña.' }
+  }
+}
