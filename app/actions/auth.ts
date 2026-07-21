@@ -11,14 +11,12 @@ export async function loginWithIdToken(idToken: string): Promise<{ error?: strin
     const decoded = await adminAuth.verifyIdToken(idToken)
     const uid     = decoded.uid
 
-    // 1 — Verificar si es admin de Sabifin
-    const adminDoc = await adminDb.collection('admins').doc(uid).get()
-    console.log('[auth] uid:', uid, '| adminDoc.exists:', adminDoc.exists, '| project:', process.env.FIREBASE_PROJECT_ID)
-    if (adminDoc.exists) {
+    // 1 — Verificar si es admin de Sabifin (custom claim)
+    if (decoded.sabifin_admin === true) {
       await createSession({
         userId:    uid,
         email:     decoded.email ?? '',
-        userName:  adminDoc.data()?.nombre ?? 'Admin Sabifin',
+        userName:  'Admin Sabifin',
         empresaId: null,
         rol:       'admin_sabifin',
         isAdmin:   true,
