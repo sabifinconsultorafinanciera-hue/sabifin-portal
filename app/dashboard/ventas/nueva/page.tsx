@@ -14,10 +14,11 @@ export default async function NuevaVentaPage() {
     .collection('empresas').doc(session.empresaId)
     .collection('productos')
     .where('activo', '==', true)
-    .orderBy('nombre')
     .get()
 
-  const productos = snap.docs.map(d => d.data() as Producto)
+  const productos = snap.docs
+    .map(d => d.data() as Producto)
+    .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'))
 
   return (
     <div className="p-6 lg:p-8">

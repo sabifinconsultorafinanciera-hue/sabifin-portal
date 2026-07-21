@@ -38,9 +38,9 @@ export async function crearVenta(data: {
       const prodRef = adminDb
         .collection('empresas').doc(session.empresaId)
         .collection('productos').doc(item.productoId)
-      await prodRef.update({
-        stockActual: (await prodRef.get()).data()?.stockActual - item.cantidad,
-      })
+      const snap = await prodRef.get()
+      const stockActual = (snap.data()?.stockActual ?? 0) - item.cantidad
+      await prodRef.update({ stockActual: Math.max(0, stockActual) })
     }
 
     revalidatePath('/dashboard')
