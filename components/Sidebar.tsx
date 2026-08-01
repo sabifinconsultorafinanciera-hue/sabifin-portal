@@ -4,9 +4,9 @@ import { usePathname } from 'next/navigation'
 import { logout } from '@/app/actions/auth'
 import type { Rol } from '@/lib/types'
 
-interface NavItem { href: string; label: string; icon: string; roles: Rol[] }
+export interface NavItem { href: string; label: string; icon: string; roles: Rol[] }
 
-const navItems: NavItem[] = [
+export const navItems: NavItem[] = [
   { href: '/dashboard',          label: 'Inicio',      icon: '◇', roles: ['vendedor','gerente','admin_sabifin'] },
   { href: '/dashboard/ventas',   label: 'Ventas',      icon: '✦', roles: ['vendedor','gerente','admin_sabifin'] },
   { href: '/dashboard/stock',    label: 'Stock',       icon: '▦', roles: ['vendedor','gerente','admin_sabifin'] },

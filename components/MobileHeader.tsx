@@ -3,17 +3,7 @@ import { logout } from '@/app/actions/auth'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { Rol } from '@/lib/types'
-
-interface NavItem { href: string; label: string; icon: string; roles: Rol[] }
-
-const navItems: NavItem[] = [
-  { href: '/dashboard',          label: 'Inicio',      icon: '◇', roles: ['vendedor','gerente','admin_sabifin'] },
-  { href: '/dashboard/ventas',   label: 'Ventas',      icon: '✦', roles: ['vendedor','gerente','admin_sabifin'] },
-  { href: '/dashboard/stock',    label: 'Stock',       icon: '▦', roles: ['vendedor','gerente','admin_sabifin'] },
-  { href: '/dashboard/transito', label: 'En tránsito', icon: '⇢', roles: ['vendedor','gerente','admin_sabifin'] },
-  { href: '/dashboard/gastos',   label: 'Gastos',      icon: '▤', roles: ['gerente','admin_sabifin'] },
-  { href: '/dashboard/balance',  label: 'Balance',     icon: '◎', roles: ['gerente','admin_sabifin'] },
-]
+import { navItems } from '@/components/Sidebar'
 
 interface MobileHeaderProps {
   userName:  string
