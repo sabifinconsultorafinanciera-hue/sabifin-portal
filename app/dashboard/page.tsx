@@ -1,5 +1,6 @@
 import { verifySession } from '@/lib/dal'
 import { adminDb } from '@/lib/firebase/admin'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import type { Venta, Gasto, Producto, Transito } from '@/lib/types'
 
@@ -17,18 +18,17 @@ async function getDashboardData(empresaId: string) {
   const today     = new Date().toISOString().slice(0, 10)
 
   const [ventasSnap, gastosSnap, productosSnap, transitoSnap] = await Promise.all([
-    adminDb.collection('empresas').doc(empresaId).collection('ventas')
-      .where('estado', '!=', 'cancelada').get(),
+    adminDb.collection('empresas').doc(empresaId).collection('ventas').get(),
     adminDb.collection('empresas').doc(empresaId).collection('gastos').get(),
     adminDb.collection('empresas').doc(empresaId).collection('productos')
       .where('activo', '==', true).get(),
-    adminDb.collection('empresas').doc(empresaId).collection('transito')
-      .where('estado', '!=', 'recibido').get(),
+    adminDb.collection('empresas').doc(empresaId).collection('transito').get(),
   ])
 
-  const ventas    = ventasSnap.docs.map(d => d.data() as Venta)
+  const ventas    = ventasSnap.docs.map(d => d.data() as Venta).filter(v => v.estado !== 'cancelada')
   const gastos    = gastosSnap.docs.map(d => d.data() as Gasto)
   const productos = productosSnap.docs.map(d => d.data() as Producto)
+  const transitos = transitoSnap.docs.map(d => d.data() as Transito).filter(t => t.estado !== 'recibido')
 
   const ventasMes      = ventas.filter(v => v.fecha.startsWith(mesActual))
   const ventasHoy      = ventas.filter(v => v.fecha === today)
@@ -44,7 +44,7 @@ async function getDashboardData(empresaId: string) {
     margenMes:      totalVentasMes - totalGastosMes,
     stockCritico:   productos.filter(p => p.stockActual > 0 && p.stockActual <= p.stockMinimo).length,
     sinStock:       productos.filter(p => p.stockActual <= 0).length,
-    transitoActivo: transitoSnap.size,
+    transitoActivo: transitos.length,
     ultimasVentas:  ventas.sort((a, b) => b.fecha.localeCompare(a.fecha)).slice(0, 5),
     stockBajo:      productos
       .filter(p => p.stockActual <= p.stockMinimo)
@@ -64,6 +64,7 @@ export default async function DashboardPage() {
   const session   = await verifySession()
   const isGerente = session.rol !== 'vendedor'
 
+  if (session.isAdmin) redirect('/admin')
   if (!session.empresaId) {
     return (
       <div className="p-8 text-center text-sm" style={{ color: 'var(--color-error)' }}>

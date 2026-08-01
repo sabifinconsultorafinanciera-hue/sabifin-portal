@@ -23,12 +23,13 @@ export default async function BalancePage() {
   const year = new Date().getFullYear()
 
   const [ventasSnap, gastosSnap] = await Promise.all([
-    adminDb.collection('empresas').doc(session.empresaId).collection('ventas')
-      .where('estado', '!=', 'cancelada').get(),
+    adminDb.collection('empresas').doc(session.empresaId).collection('ventas').get(),
     adminDb.collection('empresas').doc(session.empresaId).collection('gastos').get(),
   ])
 
-  const ventas = ventasSnap.docs.map(d => d.data() as Venta).filter(v => v.fecha.startsWith(String(year)))
+  const ventas = ventasSnap.docs
+    .map(d => d.data() as Venta)
+    .filter(v => v.estado !== 'cancelada' && v.fecha.startsWith(String(year)))
   const gastos = gastosSnap.docs.map(d => d.data() as Gasto).filter(g => g.fecha.startsWith(String(year)))
 
   // Resumen por mes
