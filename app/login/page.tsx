@@ -43,10 +43,10 @@ export default function LoginPage() {
         <p className="text-center text-xs text-text-muted mt-6">
           ¿Problemas para ingresar?{' '}
           <a
-            href="mailto:soporte@sabifin.com"
+            href="mailto:sabifinconsultorafinanciera@gmail.com"
             className="text-brand-green font-medium hover:underline"
           >
-            Contacta a Sabifin
+            Contactá a Sabifin
           </a>
         </p>
 
