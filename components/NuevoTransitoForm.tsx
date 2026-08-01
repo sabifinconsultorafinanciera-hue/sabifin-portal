@@ -48,10 +48,7 @@ export default function NuevoTransitoForm() {
           ].map(opt => (
             <label key={opt.val} className="relative cursor-pointer">
               <input type="radio" name="tipo" value={opt.val} required className="sr-only peer" defaultChecked={opt.val === 'compra'} />
-              <div className="p-3 rounded-lg border-2 text-center transition-all peer-checked:border-brand-green"
-                style={{ borderColor: 'var(--color-border)' }}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = 'var(--color-brand-green)'}
-                onMouseLeave={e => {}}>
+              <div className="p-3 rounded-lg border-2 text-center transition-all border-border peer-checked:border-brand-green hover:border-brand-green">
                 <p className="text-sm font-semibold text-text-primary">{opt.label}</p>
                 <p className="text-xs text-text-muted mt-0.5">{opt.desc}</p>
               </div>
