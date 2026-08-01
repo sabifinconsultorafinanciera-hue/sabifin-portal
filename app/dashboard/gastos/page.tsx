@@ -125,9 +125,7 @@ export default async function GastosPage() {
                   </td>
                 </tr>
               ) : gastos.map(g => (
-                <tr key={g.id}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#f8f7f4'}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = ''}>
+                <tr key={g.id} className="hover:bg-[#f8f7f4] transition-colors">
                   <td className="px-5 py-3 text-text-muted">{g.fecha}</td>
                   <td className="px-4 py-3">
                     <span className="text-xs font-medium px-2 py-0.5 rounded"

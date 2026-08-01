@@ -104,9 +104,7 @@ export default async function StockPage() {
               ) : activos.map(p => {
                 const estado = estadoStock(p)
                 return (
-                  <tr key={p.id} style={{ transition: 'background 0.1s' }}
-                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#f8f7f4'}
-                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = ''}>
+                  <tr key={p.id} className="hover:bg-[#f8f7f4] transition-colors">
                     <td className="px-5 py-3 font-medium text-text-primary">{p.nombre}</td>
                     <td className="px-4 py-3 text-text-muted font-mono text-xs">{p.sku}</td>
                     <td className="px-4 py-3 text-text-secondary">{p.categoria}</td>
